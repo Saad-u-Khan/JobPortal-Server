@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Recruiters } = require('../models');
 const bcrypt = require('bcrypt');
+const {sign} = require('jsonwebtoken');
 
 //route for recruiter auth
 router.post('/auth', async (req, res) => {
@@ -26,7 +27,8 @@ router.post('/login', async (req, res) => {
         bcrypt.compare(password, recruiter.password).then((match) => {
             if(!match) res.status(401).json({error: "Wrong credentials"});
             // res.json("You logged in");
-            res.status(200).json(recruiter);
+            const accessToken = sign({id: recruiter.id, role: "recruiter"}, "secret");
+            res.status(200).json({accessToken});
         });
     }
 })
