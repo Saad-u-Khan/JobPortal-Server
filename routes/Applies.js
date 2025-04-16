@@ -37,6 +37,20 @@ router.get('/check/:candidateId/:jobId', async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   });
+
+  router.get('/candidate/:id', async (req, res) => {
+    try {
+      const candidateId  =req.params.id;
+      const applies = await Applies.findAll({
+        where: { CandidateId: candidateId },
+        attributes: ['JobId'],
+      });
+      res.status(200).json(applies);
+    } catch (error) {
+      console.error("Error fetching applied jobs:", error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
   
 
 module.exports = router;
