@@ -51,6 +51,18 @@ router.get('/check/:candidateId/:jobId', async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   });
+
+  router.get('/getAllApplies', async (req, res) => {
+    try {
+      const applies = await Applies.findAll({
+        attributes: ['CandidateId', 'JobId']
+      });
+      res.status(200).json(applies);
+    } catch (error) {
+      console.error("Error fetching all applications:", error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
   
 
 module.exports = router;
