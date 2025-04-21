@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { Applies } = require('../models');
+const { validateToken, 
+        authorizeCandidate,
+        authorizeRecruiter
+        } = require('../middlewares/AuthMiddleware');
 
-router.post('/:id', async (req, res) => {
+router.post('/:id', validateToken, authorizeCandidate, async (req, res) => {
     const candidateId = req.params.id;
     const { jobId } = req.body;
     const found = await Applies.findOne({ where : { CandidateId : candidateId,
@@ -16,7 +20,7 @@ router.post('/:id', async (req, res) => {
      }
 })
 
-router.get('/check/:candidateId/:jobId', async (req, res) => {
+router.get('/check/:candidateId/:jobId', validateToken, async (req, res) => {
     const candidateId = req.params.candidateId;
     const jobId = req.params.jobId;
   
@@ -38,7 +42,7 @@ router.get('/check/:candidateId/:jobId', async (req, res) => {
     }
   });
 
-  router.get('/candidate/:id', async (req, res) => {
+  router.get('/candidate/:id', validateToken, authorizeCandidate, async (req, res) => {
     try {
       const candidateId  =req.params.id;
       const applies = await Applies.findAll({
@@ -52,7 +56,7 @@ router.get('/check/:candidateId/:jobId', async (req, res) => {
     }
   });
 
-  router.get('/getAllApplies', async (req, res) => {
+  router.get('/getAllApplies', validateToken, authorizeRecruiter, async (req, res) => {
     try {
       const applies = await Applies.findAll({
         attributes: ['CandidateId', 'JobId']
